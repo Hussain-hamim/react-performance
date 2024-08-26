@@ -1,9 +1,16 @@
-// Code splitting
+// eager loading
 // http://localhost:3000/isolated/final/01.js
 
 import * as React from 'react'
 
 const Globe = React.lazy(() => import('../globe'))
+
+function loadGlobe() {
+  return import('../globe')
+}
+// same:
+// const loadGlobe = () => import('../globe')
+// const Globe = React.lazy(loadGlobe)
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -24,6 +31,8 @@ function App() {
           type="checkbox"
           checked={showGlobe}
           onChange={e => setShowGlobe(e.target.checked)}
+          onMouseEnter={loadGlobe}
+          onFocus={loadGlobe}
         />
         {' show globe'}
       </label>
