@@ -1,11 +1,10 @@
 // Code splitting
-// 💯 eager loading
-// http://localhost:3000/isolated/final/01.extra-1.js
+// 💯 webpack magic comments
+// http://localhost:3000/isolated/final/01.extra-2.js
 
 import * as React from 'react'
 
-const loadGlobe = () => import('../globe')
-const Globe = React.lazy(loadGlobe)
+const Globe = React.lazy(() => import(/* webpackPrefetch: true */ '../globe'))
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -21,11 +20,7 @@ function App() {
         padding: '2rem',
       }}
     >
-      <label
-        style={{marginBottom: '1rem'}}
-        onMouseEnter={loadGlobe}
-        onFocus={loadGlobe}
-      >
+      <label style={{marginBottom: '1rem'}}>
         <input
           type="checkbox"
           checked={showGlobe}
