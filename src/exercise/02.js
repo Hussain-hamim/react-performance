@@ -62,6 +62,7 @@ function App() {
 
   const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
   const items = allItems.slice(0, 100)
+  console.log(items)
 
   const {
     selectedItem,
