@@ -62,9 +62,11 @@ function App() {
   const [inputValue, setInputValue] = React.useState('')
 
   const {data: allItems, run} = useAsync({data: [], status: 'pending'})
+
   React.useEffect(() => {
     run(getItems(inputValue))
   }, [inputValue, run])
+
   const items = allItems.slice(0, 100)
 
   const {
