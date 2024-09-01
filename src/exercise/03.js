@@ -1,10 +1,14 @@
-// React.memo for reducing unnecessary re-renders
-// http://localhost:3000/isolated/exercise/03.js
+// useMemo for expensive calculations
+// 💯 React Production Mode
+// http://localhost:3000/isolated/final/02.extra-1.js
+
+// NOTE: there are no changes in this file from 02.js, for this one you're just
+// observing the difference when you build for production
 
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
-import {getItems} from '../workerized-filter-cities'
-import {useAsync, useForceRerender} from '../utils'
+import {getItems} from '../filter-cities'
+import {useForceRerender} from '../utils'
 
 function Menu({
   items,
@@ -30,7 +34,6 @@ function Menu({
     </ul>
   )
 }
-// 🐨 Memoize the Menu here using React.memo
 
 function ListItem({
   getItemProps,
@@ -56,16 +59,12 @@ function ListItem({
     />
   )
 }
-// 🐨 Memoize the ListItem here using React.memo
 
 function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
 
-  const {data: allItems, run} = useAsync({data: [], status: 'pending'})
-  React.useEffect(() => {
-    run(getItems(inputValue))
-  }, [inputValue, run])
+  const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
   const items = allItems.slice(0, 100)
 
   const {
@@ -114,8 +113,3 @@ function App() {
 }
 
 export default App
-
-/*
-eslint
-  no-func-assign: 0,
-*/
