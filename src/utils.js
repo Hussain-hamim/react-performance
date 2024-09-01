@@ -1,6 +1,7 @@
 import * as React from 'react'
 import useInterval from 'use-interval'
 
+// this prevent no to update on unmounted which can lead to memory leaks
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false)
   React.useLayoutEffect(() => {
@@ -20,26 +21,36 @@ function useSafeDispatch(dispatch) {
 // }, [pokemonName, run])
 const defaultInitialState = {status: 'idle', data: null, error: null}
 
+// design to help manage the state of an asynchronous operation, such as fetchin data
+// from an api
 function useAsync(initialState) {
+  // maintain a persistent reference to the initial state, no re-render
   const initialStateRef = React.useRef({
     ...defaultInitialState,
     ...initialState,
   })
+
   const [{status, data, error}, setState] = React.useReducer(
+    // the reducer function merges the current state(s) with an action(a),
+    // this approach allow for partial updates to the state
     (s, a) => ({...s, ...a}),
     initialStateRef.current,
   )
 
   const safeSetState = useSafeDispatch(setState)
 
+  // this fn is used to an async operation
   const run = React.useCallback(
+    // the argument must be promise if not throw error
     promise => {
       if (!promise || !promise.then) {
         throw new Error(
           `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`,
         )
       }
+
       safeSetState({status: 'pending'})
+
       return promise.then(
         data => {
           safeSetState({data, status: 'resolved'})
@@ -51,9 +62,12 @@ function useAsync(initialState) {
         },
       )
     },
+
     [safeSetState],
   )
 
+  // this fns allow manual updating of the data and error
+  // use useCallBack for preventing unnecessary re-renders
   const setData = React.useCallback(
     data => safeSetState({data}),
     [safeSetState],
@@ -62,6 +76,8 @@ function useAsync(initialState) {
     error => safeSetState({error}),
     [safeSetState],
   )
+
+  ///
   const reset = React.useCallback(
     () => safeSetState(initialStateRef.current),
     [safeSetState],
