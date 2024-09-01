@@ -14,10 +14,13 @@ function NameInput({name, onNameChange}) {
   )
 }
 
+// NameInput = React.useMemo(NameInput)
+
 function Example() {
   const [name, setName] = React.useState('')
   const [count, setCount] = React.useState(0)
   const increment = () => setCount(c => c + 1)
+
   return (
     <div>
       <div>

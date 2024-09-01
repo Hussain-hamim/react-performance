@@ -1,14 +1,11 @@
-// useMemo for expensive calculations
-// 💯 React Production Mode
-// http://localhost:3000/isolated/final/02.extra-1.js
-
-// NOTE: there are no changes in this file from 02.js, for this one you're just
-// observing the difference when you build for production
+// React.memo for reducing unnecessary re-renders
+// 💯 Use a custom comparator function
+// http://localhost:3000/isolated/final/03.extra-1.js
 
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
-import {getItems} from '../filter-cities'
-import {useForceRerender} from '../utils'
+import {getItems} from '../workerized-filter-cities'
+import {useAsync, useForceRerender} from '../utils'
 
 function Menu({
   items,
@@ -34,6 +31,7 @@ function Menu({
     </ul>
   )
 }
+Menu = React.memo(Menu)
 
 function ListItem({
   getItemProps,
@@ -59,12 +57,35 @@ function ListItem({
     />
   )
 }
+ListItem = React.memo(ListItem, (prevProps, nextProps) => {
+  // true means do NOT rerender
+  // false means DO rerender
+
+  // these ones are easy if any of these changed, we should re-render
+  if (prevProps.getItemProps !== nextProps.getItemProps) return false
+  if (prevProps.item !== nextProps.item) return false
+  if (prevProps.index !== nextProps.index) return false
+  if (prevProps.selectedItem !== nextProps.selectedItem) return false
+
+  // this is trickier. We should only re-render if this list item:
+  // 1. was highlighted before and now it's not
+  // 2. was not highlighted before and now it is
+  if (prevProps.highlightedIndex !== nextProps.highlightedIndex) {
+    const wasPrevHighlighted = prevProps.highlightedIndex === prevProps.index
+    const isNowHighlighted = nextProps.highlightedIndex === nextProps.index
+    return wasPrevHighlighted === isNowHighlighted
+  }
+  return true
+})
 
 function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
 
-  const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
+  const {data: allItems, run} = useAsync({data: [], status: 'pending'})
+  React.useEffect(() => {
+    run(getItems(inputValue))
+  }, [inputValue, run])
   const items = allItems.slice(0, 100)
 
   const {
@@ -113,3 +134,8 @@ function App() {
 }
 
 export default App
+
+/*
+eslint
+  no-func-assign: 0,
+*/
