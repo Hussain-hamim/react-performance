@@ -1,5 +1,9 @@
 // useMemo for expensive calculations
-// http://localhost:3000/isolated/final/02.js
+// 💯 React Production Mode
+// http://localhost:3000/isolated/final/02.extra-1.js
+
+// NOTE: there are no changes in this file from 02.js, for this one you're just
+// observing the difference when you build for production
 
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
@@ -62,7 +66,6 @@ function App() {
 
   const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
   const items = allItems.slice(0, 100)
-  console.log(items)
 
   const {
     selectedItem,
