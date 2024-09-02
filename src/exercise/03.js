@@ -65,6 +65,7 @@ function App() {
   React.useEffect(() => {
     run(getItems(inputValue))
   }, [inputValue, run])
+
   const items = allItems.slice(0, 100)
 
   const {
