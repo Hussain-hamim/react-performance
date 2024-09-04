@@ -95,6 +95,7 @@ function Cell({row, column}) {
       onClick={handleClick}
       style={{
         color: cell > 50 ? 'white' : 'black',
+        // a background color proportional to its value
         backgroundColor: `rgba(0, 0, 0, ${cell / 100})`,
       }}
     >

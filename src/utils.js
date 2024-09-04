@@ -100,6 +100,9 @@ function useAsync(initialState) {
   }
 }
 
+// useReducer is used with a simple incrementor but the state value is not used anywhere
+// the second item returned by useReducer is the dispatch fn which when called trigger the reducer(re-render)
+//since we only return dispatch fn ([1]) calling the useForceRerender() hook force a re-render by incrementing an internal state which is not read anywhere
 const useForceRerender = () => React.useReducer(x => x + 1, 0)[1]
 
 function debounce(cb, time) {
@@ -112,10 +115,16 @@ function debounce(cb, time) {
 
 // this only needs to exist because concurrent mode isn't here yet. When we get
 // that then so much of our hack-perf fixes go away!
+
+// this hook delay state update to optimize performance with frequent updates
 function useDebouncedState(initialState) {
   const [state, setState] = React.useState(initialState)
+
+  // this is to ensure that state changes only occur after 200ms of inactivity.
+  // useCallback is used to memoized not recreate on every render.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetState = React.useCallback(debounce(setState, 200), [])
+  // the returned debouncedSetState mean updates are throttled
   return [state, debouncedSetState]
 }
 
@@ -188,13 +197,17 @@ function AppGrid({
         }}
       >
         <div style={{width: columns * 40}}>
-          {Array.from({length: rows}).map((r, row) => (
-            <div key={row} style={{display: 'flex'}}>
-              {Array.from({length: columns}).map((c, column) => (
-                <Cell key={column} row={row} column={column} />
-              ))}
-            </div>
-          ))}
+          {
+            // Array.from is a method in js that create a new shallow-copied array from an array-like or
+            // iterable object
+            Array.from({length: rows}).map((r, row) => (
+              <div key={row} style={{display: 'flex'}}>
+                {Array.from({length: columns}).map((c, column) => (
+                  <Cell key={column} row={row} column={column} />
+                ))}
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -208,12 +221,18 @@ function updateGridState(grid) {
 }
 
 function updateGridCellState(grid, {row, column}) {
+  // iterate over each rows
   return grid.map((cells, rI) => {
+    // when it reaches a specific row
     if (rI === row) {
+      // it then iterate over the cells in that row
       return cells.map((cell, cI) => {
+        // the specific cell at the provided column index
         if (cI === column) {
+          // is updated with a random value from 0 to 100
           return Math.random() * 100
         }
+        // the other cells in the row remains unchanged also for rows
         return cell
       })
     }
