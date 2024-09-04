@@ -141,6 +141,7 @@ function AppGrid({
             Update Grid Data
           </button>
         </div>
+
         <div>
           <label htmlFor="keepUpdated">Keep Grid Data updated</label>
           <input
@@ -153,6 +154,7 @@ function AppGrid({
             <Interval onInterval={onUpdateGrid} interval={500} />
           ) : null}
         </div>
+
         <div>
           <label htmlFor="rows">Rows to display: </label>
           <input
@@ -176,6 +178,7 @@ function AppGrid({
           />
         </div>
       </form>
+
       <div
         style={{
           width: '100%',
