@@ -121,7 +121,7 @@ function useDebouncedState(initialState) {
   const [state, setState] = React.useState(initialState)
 
   // this is to ensure that state changes only occur after 200ms of inactivity.
-  // useCallback is used to memoized not recreate on every render.
+  // useCallback is used to memoized not to recreate on every render.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetState = React.useCallback(debounce(setState, 200), [])
   // the returned debouncedSetState mean updates are throttled
@@ -215,6 +215,8 @@ function AppGrid({
 }
 
 function updateGridState(grid) {
+  // its iterating over a nested array which which from Array.from()
+  // there's a 100 array elements and every element again is an array with a 100 elements
   return grid.map(row => {
     return row.map(cell => (Math.random() > 0.7 ? Math.random() * 100 : cell))
   })
