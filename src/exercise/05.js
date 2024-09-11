@@ -13,7 +13,7 @@ import {
 const AppStateContext = React.createContext()
 const AppDispatchContext = React.createContext()
 
-// Array.from is a method in js that create a new shallow-copied array from an array-like or
+// Array.from: is a method in js that create a new shallow-copied array from an array-like or
 // iterable object.
 // its iterating over a nested array which which from Array.from()
 // there's a 100 array elements and every element again is an array with a 100 elements
@@ -92,7 +92,7 @@ function Cell({row, column}) {
   const state = useAppState()
   const dispatch = useAppDispatch()
 
-  const cell = state.grid[row][column]
+  const cell = state.grid[row][column] // cuz it's nested array
   const handleClick = () => dispatch({type: 'UPDATE_GRID_CELL', row, column})
 
   return (
