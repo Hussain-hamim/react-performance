@@ -105,6 +105,7 @@ function Grid() {
 }
 Grid = React.memo(Grid)
 
+// HOC component
 function withStateSlice(Comp, slice) {
   const MemoComp = React.memo(Comp)
   function Wrapper(props, ref) {
